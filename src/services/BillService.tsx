@@ -1,18 +1,17 @@
 import axios from 'axios';
 import * as React from "react";
 
-const BillService = {
+ export function getAllBills(){
+     // @ts-ignore
+     const billData = [];
+     axios.get(`/bill/`)
+    .then(res => {
+        billData.push(res.data);
+        })
 
-//   getAllBills(state: State){
-//     const data = axios.po(`/bill/`)
-//     .then(res => {
-//       const billData = res.data;
-//       this.setState({ bills: billData, isLoading: false });
-//     })
-
-//     return data
-//   }
-
-};
-
-export default BillService;
+    .catch(function(error){
+        console.log(error);
+    });
+    // @ts-ignore
+    return billData;
+  }

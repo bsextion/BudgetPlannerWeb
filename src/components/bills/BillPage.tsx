@@ -1,128 +1,112 @@
+import {
+  Container,
+  Row,
+  Col,
+  Spinner,
+  FormControl,
+  Form,
+  InputGroup,
+  Button,
+} from "react-bootstrap";
+import { Bill } from "./bill";
+import axios from "axios";
+import MaterialTable from "material-table";
+import {
+  AddBox,
+  ArrowDownward,
+  Check,
+  Clear,
+  DeleteOutline,
+  ChevronRight,
+  Edit,
+  SaveAlt,
+  FilterList,
+  FirstPage,
+  LastPage,
+  ChevronLeft,
+  Search,
+  Remove,
+  ViewColumn,
+} from "@material-ui/icons";
+import "../../common/spinner.css";
 import * as React from "react";
-import { Container, Row, Col, Spinner, FormControl, Form, InputGroup } from "react-bootstrap";
-import {Bill} from './bill'
-import BootstrapTable from "react-bootstrap-table-next";
-// @ts-ignore
-import cellEditFactory from "react-bootstrap-table2-editor";
-import axios from 'axios';
-import BillService from '../../services/BillService'
 
 // @ts-ignore
-const columns = [{
-  dataField: 'id',
-  text: 'Bill ID'
-}, 
-{
-  dataField: 'name',
-  text:  'Bill Name'
+const columns = [
+  { title: "Name", field: "name" },
+  { title: "Amount", field: "amount" },
+  { title: "Due Date", field: "dueTime" },
+  { title: "Category", field: "category" },
+];
 
-}, 
-{
-  dataField: 'dueTime',
-  text: 'Bill Price'
-},
-{
-  dataField:'amount',
-  text: 'Amount',
-},
-{
-  dataField: 'category',
-  text: 'Category'
-}
-]
-;
+const tableIcons = {
+  // @ts-ignore
+  Add: React.forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+};
 
 export class BillPage extends React.Component {
-
+  // @ts-ignore
   state = {
     isLoading: true,
-    bills: []
-  }
-
-   componentDidMount() {
-     
-    axios.get(`/bill/`)
-    .then(res => {
+    bills: [],
+  };
+  componentDidMount() {
+    axios.get(`/bill/`).then((res) => {
       const billData = res.data;
       this.setState({ bills: billData, isLoading: false });
-    })
-
+    });
   }
+  // constructor(props: Readonly<{}>) {
+  //   super(props);
+  //   this.addRow = this.addRow.bind(this);
+  // }
+
+  //   addRow() {
+  //     let rows = this.state.rows
+  //     rows.push('new row')
+  //     this.setState({rows: rows})
+  // }
 
   render() {
-    const BillTable  = (
-      <BootstrapTable
-      keyField="id"
-      data={ this.state.bills }
-      columns={ columns }
-      cellEdit={ cellEditFactory({ mode: 'click' }) }>
-
-      </BootstrapTable>
-  //     <div>
-  //       <Container>
-  //           <Row>
-  //         <Col>Bill ID</Col>
-  //         <Col>Bill Name</Col>
-  //         <Col>Due Date</Col>
-  //         <Col>Amount</Col>
-  //         <Col>Category</Col>
-  //           </Row>
-  //           {this.state.bills.map(bill => 
-       
-  //         <Row><Col>
-  //         <InputGroup className="mb-3">
-  //   <InputGroup.Prepend>
-  //     <InputGroup.Text id="basic-addon3">
-  //      BI
-  //     </InputGroup.Text>
-  //   </InputGroup.Prepend>
-  //   <FormControl id="basic-url" aria-describedby="basic-addon3" value={bill['id']} readOnly={false} />
-  // </InputGroup></Col>
-  // <Col>
-  //         <InputGroup className="mb-3">
-  //   <FormControl id="basic-url" aria-describedby="basic-addon3" />
-  // </InputGroup></Col>
-  // <Col>
-  //         <InputGroup className="mb-3">
-  //   <InputGroup.Prepend>
-  //     <InputGroup.Text id="basic-addon3">
-  //      BI
-  //     </InputGroup.Text>
-  //   </InputGroup.Prepend>
-  //   <FormControl id="basic-url" aria-describedby="basic-addon3" />
-  // </InputGroup></Col>
-  // <Col>
-  //         <InputGroup className="mb-3">
-  //   <InputGroup.Prepend>
-  //     <InputGroup.Text id="basic-addon3">
-  //      BI
-  //     </InputGroup.Text>
-  //   </InputGroup.Prepend>
-  //   <FormControl id="basic-url" aria-describedby="basic-addon3" />
-  // </InputGroup></Col>
-  // <Col>
-  //         <InputGroup className="mb-3">
-  //   <InputGroup.Prepend>
-  //     <InputGroup.Text id="basic-addon3">
-  //      BI
-  //     </InputGroup.Text>
-  //   </InputGroup.Prepend>
-  //   <FormControl id="basic-url" aria-describedby="basic-addon3" />
-  // </InputGroup></Col>
-  //         </Row>
-  //           )}
-  //       </Container>
-  //     </div>
-    )
-
     let { bills, isLoading } = this.state;
     if (isLoading) {
       return (
-        <Spinner animation="border" role="status">
+        <Spinner className="spinner-large" animation="border" role="status">
           <span className="sr-only">Loading...</span>
         </Spinner>
       );
     }
-    return <div>{BillTable}</div>;
+
+    return (
+      <div style={{ maxWidth: "1550px", margin: "20px auto" }}>
+        <MaterialTable
+          title="Bills"
+          columns={columns}
+          data={this.state.bills}
+          actions={[
+            {
+              icon: "add",
+              tooltip: "Add User",
+              isFreeAction: true,
+              onClick: (event, bills) => {
+                let rows = this.state.bills;
+
+                this.setState({ bills: bills });
+              },
+            },
+            {
+              icon: "library_add",
+              tooltip: "Duplicate User",
+              onClick: (event) => alert("You want to add a new row"),
+            },
+            {
+              icon: "delete",
+              tooltip: "Delete User",
+              onClick: (event) => alert("You want to add a new row"),
+            },
+          ]}
+        ></MaterialTable>
+      </div>
+    );
   }
 }
