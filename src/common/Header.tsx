@@ -16,11 +16,10 @@ const Header = () => {
     <Nav className="mr-auto">
     <Nav.Link href="/">Home</Nav.Link>
     <Nav.Link href="/bill">Bill List</Nav.Link>
-      <Nav.Link href="#link">Account</Nav.Link>
-      <NavDropdown title="Features" id="basic-nav-dropdown">
-        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+      <NavDropdown title="Account" id="basic-nav-dropdown">
+        <NavDropdown.Item href="#action/3.1">View Account</NavDropdown.Item>
         <NavDropdown.Divider />
-        <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+        <NavDropdown.Item href="#action/3.4">Modify Account</NavDropdown.Item>
       </NavDropdown>
     </Nav>
   </Navbar.Collapse>
