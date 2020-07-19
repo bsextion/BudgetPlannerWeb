@@ -7,28 +7,27 @@ import axios from "axios";
 import * as billService from "../../services/BillService";
 import { BillPage } from "../bills/BillPage";
 import "./style.css";
-import MaterialTable from "material-table";
 import { Spinner } from "react-bootstrap";
+import { Bill } from "../../constants/bill";
 
-const columns = [
-  { title: "Name", field: "name" },
-  { title: "Amount", field: "amount"  },
-  { title: "Due Date", field: "dueTime" },
-  { title: "Category", field: "category" },
-];
+interface IState {
+  isLoading: boolean;
+  bills: Bill[];
+}
+
 export class Calendar extends React.Component {
   state = {
     isLoading: true,
-    bills: [],
+    bills: [{ id: "", name: "", dueTime: new Date(), amount: 0, category: "" }],
   };
-   componentDidMount() {
-    this.getBillData()
+  componentDidMount() {
+    this.getBillData();
   }
   getBillData() {
     axios.get(`/bill/`).then((res) => {
       const billData = res.data;
       this.setState({ bills: billData, isLoading: false });
-    })
+    });
   }
 
   render() {
@@ -39,27 +38,28 @@ export class Calendar extends React.Component {
           <span className="sr-only">Loading...</span>
         </Spinner>
       );
-        }
-        return (
-          <div style={{display: "inline"}}>
-           <div style={{width:"100%", padding: "50px"}}>
-            <FullCalendar
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth",
-              }}
-              plugins={[dayGridPlugin]}
-              initialView="dayGridMonth"
-              events={this.getEvents()}
-            />
-          </div>
-          </div>
-        );
+    }
+    return (
+      <div style={{ display: "inline" }}>
+        <div style={{ width: "100%", padding: "50px" }}>
+          <FullCalendar
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth",
+            }}
+            plugins={[dayGridPlugin]}
+            initialView="dayGridMonth"
+            events={this.getEvents()}
+            eventClick={this.addEvent}
+            displayEventTime={false}
+          />
+        </div>
+      </div>
+    );
   }
 
   private getEvents() {
-    console.log(this.state.bills);
     return this.state.bills.map((bill) => {
       const { id, name, dueTime, amount, category } = bill;
       let startTime = new Date(dueTime);
@@ -72,8 +72,6 @@ export class Calendar extends React.Component {
       };
     });
   }
-
-  private addEvent() {
-    
-  }
+  // @ts-ignore
+  private addEvent = (event: any) => {};
 }

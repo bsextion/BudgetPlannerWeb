@@ -8,7 +8,7 @@ import {
   InputGroup,
   Button,
 } from "react-bootstrap";
-import {Bill} from "../../constants/bill";
+import { Bill } from "../../constants/bill";
 import axios from "axios";
 import MaterialTable from "material-table";
 import {
@@ -34,13 +34,15 @@ import { IType } from "../../constants/column-types";
 
 const currency: IType = "currency";
 const date: IType = "date";
+const boolean: IType = "boolean";
 // @ts-ignore
 const columns = [
   { title: "Name", field: "name" },
-  { title: "Amount", field: "amount", type: currency},
-  { title: "Due Date", field: "dueTime", type: date},
+  { title: "Amount", field: "amount", type: currency },
+  { title: "Due Date", field: "dueTime", type: date },
   // @ts-ignore
-  { title: "Category", field: "category"},
+  { title: "Category", field: "category" },
+  { title: "Paid", field: "isPaid", type: boolean },
 ];
 
 const tableIcons = {
@@ -49,8 +51,8 @@ const tableIcons = {
 };
 
 interface IState {
-isLoading: boolean;
-bills: Bill[]
+  isLoading: boolean;
+  bills: Bill[];
 }
 
 export class BillPage extends React.Component<IState> {
@@ -58,12 +60,20 @@ export class BillPage extends React.Component<IState> {
 
   state = {
     isLoading: true,
-    bills: [{ id: '', name: '', dueTime: new Date, amount: 0, category: '',}],
+    bills: [
+      {
+        id: "",
+        name: "",
+        dueTime: new Date(),
+        amount: 0,
+        category: "",
+        isPaid: false,
+      },
+    ],
   };
 
-
   componentDidMount() {
-    this.getBillData()
+    this.getBillData();
   }
 
   // componentDidUpdate(prevProps: any){
@@ -76,8 +86,8 @@ export class BillPage extends React.Component<IState> {
     });
   }
 
-  addNewBill(billAdded: Bill){
-    axios.post('/bill/add', billAdded).then((res) => {
+  addNewBill(billAdded: Bill) {
+    axios.post("/bill/add", billAdded).then((res) => {
       const billData = res.data;
       console.log(res);
       console.log(res.data);
@@ -85,15 +95,13 @@ export class BillPage extends React.Component<IState> {
     console.log(billAdded);
   }
 
-  updateBill(billUpdated: Bill){
-    axios.put('/bill/update', billUpdated).then((res) => {
+  updateBill(billUpdated: Bill) {
+    axios.put("/bill/update", billUpdated).then((res) => {
       const billData = res.data;
-      console.log(res);
-      console.log(res.data);
     });
   }
 
-  deleteBill(bill: Bill){
+  deleteBill(bill: Bill) {
     axios.delete(`/bill/remove/${bill.id}`).then((res) => {
       const billData = res.data;
       console.log(res);
@@ -125,7 +133,7 @@ export class BillPage extends React.Component<IState> {
                   {
                     const data = this.state.bills;
                     data.push(newData);
-                    this.addNewBill(newData)
+                    this.addNewBill(newData);
                     this.setState({ data }, () => resolve());
                   }
                   resolve();
@@ -138,23 +146,21 @@ export class BillPage extends React.Component<IState> {
                     const data = this.state.bills;
                     const index = data.indexOf(newData);
                     data[index] = newData;
-                    this.updateBill(newData)
+                    this.updateBill(newData);
                     this.setState({ data }, () => resolve());
                   }
                   resolve();
                 }, 1000);
-              })
-              ,
+              }),
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
                   {
-                   let data = this.state.bills;
+                    let data = this.state.bills;
                     const index = data.indexOf(oldData);
                     data.splice(index, 1);
-                    this.deleteBill(oldData)
+                    this.deleteBill(oldData);
                     this.setState({ data }, () => resolve());
-                
                   }
                   resolve();
                 }, 1000);
